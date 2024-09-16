@@ -1,0 +1,180 @@
+[{
+  "_id": {
+    "$oid": "66c5ca264807dbc9468b4f0a"
+  },
+  "name": "Biriyani",
+  "type": "Non-Veg",
+  "description": "A flavorful rice dish with aromatic spices and tender meat.",
+  "price": 350,
+  "image_path": "biriyani.jpg"
+},
+{
+  "_id": {
+    "$oid": "66c5ca264807dbc9468b4f0b"
+  },
+  "name": "Veg-burger",
+  "type": "Veg",
+  "description": "A classic veggie burger with lettuce, tomato, and cheese.",
+  "price": 120,
+  "image_path": "burger1.jpg"
+},
+{
+  "_id": {
+    "$oid": "66c5ca264807dbc9468b4f0c"
+  },
+  "name": "Non-Veg-burger",
+  "type": "Non-Veg",
+  "description": "A juicy chicken burger with crispy lettuce and mayo.",
+  "price": 150,
+  "image_path": "burger2.jpg"
+},
+{
+  "_id": {
+    "$oid": "66c5ca264807dbc9468b4f0d"
+  },
+  "name": "Chicken",
+  "type": "Non-Veg",
+  "description": "Grilled chicken marinated with herbs and spices.",
+  "price": 300,
+  "image_path": "chicken.jpg"
+},
+{
+  "_id": {
+    "$oid": "66c5ca264807dbc9468b4f0e"
+  },
+  "name": "Chow",
+  "type": "Veg",
+  "description": "Stir-fried noodles with mixed vegetables and soy sauce.",
+  "price": 180,
+  "image_path": "chow.jpg"
+},
+{
+  "_id": {
+    "$oid": "66c5ca264807dbc9468b4f0f"
+  },
+  "name": "Cold Drink",
+  "type": "Veg",
+  "description": "Chilled carbonated soft drink to refresh your mood.",
+  "price": 50,
+  "image_path": "cold_drink.jpg"
+},
+{
+  "_id": {
+    "$oid": "66c5ca264807dbc9468b4f10"
+  },
+  "name": "Cutlet",
+  "type": "Veg",
+  "description": "Crispy vegetable cutlets made with a mix of vegetables and spices.",
+  "price": 100,
+  "image_path": "cutlet.jpg"
+},
+{
+  "_id": {
+    "$oid": "66c5ca264807dbc9468b4f11"
+  },
+  "name": "Drink",
+  "type": "Veg",
+  "description": "A refreshing beverage to complement your meal.",
+  "price": 40,
+  "image_path": "drink.jpg"
+},
+{
+  "_id": {
+    "$oid": "66c5ca264807dbc9468b4f12"
+  },
+  "name": "Fry",
+  "type": "Non-Veg",
+  "description": "Crispy fried chicken with a blend of spices.",
+  "price": 200,
+  "image_path": "fry.jpg"
+},
+{
+  "_id": {
+    "$oid": "66c5ca264807dbc9468b4f13"
+  },
+  "name": "Ice",
+  "type": "Veg",
+  "description": "Chilled ice cubes to keep your drink cool.",
+  "price": 10,
+  "image_path": "ice.jpg"
+},
+{
+  "_id": {
+    "$oid": "66c5ca264807dbc9468b4f14"
+  },
+  "name": "Lassi",
+  "type": "Veg",
+  "description": "A traditional Indian yogurt drink, sweet and refreshing.",
+  "price": 60,
+  "image_path": "lassi.jpg"
+},
+{
+  "_id": {
+    "$oid": "66c5ca264807dbc9468b4f15"
+  },
+  "name": "Manchurian",
+  "type": "Veg",
+  "description": "Crispy veggie balls tossed in a tangy Indo-Chinese sauce.",
+  "price": 150,
+  "image_path": "manchurian.jpg"
+},
+{
+  "_id": {
+    "$oid": "66c5ca264807dbc9468b4f16"
+  },
+  "name": "Nan",
+  "type": "Veg",
+  "description": "Soft and fluffy Indian flatbread made in a tandoor.",
+  "price": 40,
+  "image_path": "nan.jpg"
+},
+{
+  "_id": {
+    "$oid": "66c5ca264807dbc9468b4f17"
+  },
+  "name": "Paneer",
+  "type": "Veg",
+  "description": "Soft cottage cheese cubes cooked in a rich tomato gravy.",
+  "price": 220,
+  "image_path": "paneer.jpg"
+},
+{
+  "_id": {
+    "$oid": "66c5ca264807dbc9468b4f18"
+  },
+  "name": "Pizza",
+  "type": "Veg",
+  "description": "A classic pizza topped with mozzarella and fresh veggies.",
+  "price": 250,
+  "image_path": "pizza.jpg"
+},
+{
+  "_id": {
+    "$oid": "66c5ca264807dbc9468b4f19"
+  },
+  "name": "Roll",
+  "type": "Non-Veg",
+  "description": "A wrap filled with spicy chicken and fresh veggies.",
+  "price": 120,
+  "image_path": "roll.jpg"
+},
+{
+  "_id": {
+    "$oid": "66c5ca264807dbc9468b4f1a"
+  },
+  "name": "Sandwich",
+  "type": "Veg",
+  "description": "A simple sandwich with fresh veggies and cheese.",
+  "price": 80,
+  "image_path": "sandwich.jpg"
+},
+{
+  "_id": {
+    "$oid": "66c5ca264807dbc9468b4f1b"
+  },
+  "name": "Shake",
+  "type": "Veg",
+  "description": "A thick and creamy milkshake with your choice of flavor.",
+  "price": 100,
+  "image_path": "shake.jpg"
+}]
