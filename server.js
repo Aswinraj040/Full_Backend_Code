@@ -44,8 +44,33 @@ const dishSchema = new mongoose.Schema({
   price: Number,
   image_path: String, // Path to the image file
 });
+
+const categorySchema = new mongoose.Schema({
+  name: String,
+});
+const Category = mongoose.model("Category", categorySchema);
+
+const specialSchema = new mongoose.Schema({
+  name: String,
+  type: String,
+  description: String,
+  price: Number,
+  image_path: String, // Path to the image file
+  available: Boolean,
+  timestamp: Date
+});
+
+const popularItemSchema = new mongoose.Schema({
+  name: String,
+  type: String,
+  description: String,
+  price: Number,
+  image_path: String,
+});
 // Create a model based on the menu item schema
 const MenuItem = mongoose.model('MenuItem', menuItemSchema, 'menuitems');
+const Special = mongoose.model('Special', specialSchema, 'todayspecials');
+const PopularItem = mongoose.model('PopularItem', popularItemSchema, 'popular_items');
 const Dish = mongoose.model('Dish', dishSchema);
 app.use('/upimages', express.static(path.join(__dirname, 'Allitems')));
 
@@ -55,6 +80,30 @@ app.get('/menuitems', async (req, res) => {
     res.json(menuItems);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch menu items' });
+  }
+});
+
+app.get("/menuitems/category/:category", async (req, res) => {
+  try {
+    const { category } = req.params;
+    // Find menu items by category
+    const menuItems = await MenuItem.find({
+      category: category,
+      available: true,
+    });
+    res.json(menuItems);
+  } catch (err) {
+    console.error("Failed to fetch menu items by category:", err);
+    res.status(500).json({ error: "Failed to fetch menu items by category" });
+  }
+});
+
+app.get("/api/categories", async (req, res) => {
+  try {
+    const categories = await Category.find({});
+    res.json(categories);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -71,6 +120,96 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
+
+app.get('/menu-items-status', async (req, res) => {
+  try {
+    const menuItems = await MenuItem.find();
+    const popularItems = await PopularItem.find();
+    const todaySpecials = await Special.find();
+
+    const menuItemsWithStatus = menuItems.map(item => ({
+      ...item.toObject(),
+      isPopular: popularItems.some(popularItem => popularItem.name === item.name),
+      isTodaySpecial: todaySpecials.some(specialItem => specialItem.name === item.name)
+    }));
+
+    res.json(menuItemsWithStatus);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch menu items with status' });
+  }
+});
+
+app.post('/todays-special', async (req, res) => {
+  try {
+    const { name } = req.body;
+
+    const existingSpecial = await Special.findOne({ name });
+
+    if (existingSpecial) {
+      // If it's already a special, remove it
+      await Special.deleteOne({ name });
+      res.status(200).json({ message: 'Item removed from Today\'s Special' });
+    } else {
+      // If it's not a special, add it
+      const specialItem = await MenuItem.findOne({ name });
+
+      if (!specialItem) {
+        return res.status(404).json({ error: 'Menu item not found' });
+      }
+
+      const newSpecial = new Special({
+        name: specialItem.name,
+        type: specialItem.type,
+        description: specialItem.description,
+        price: specialItem.price,
+        image_path: specialItem.image_path,
+        available: specialItem.available,
+        timestamp: new Date(),
+      });
+
+      await newSpecial.save();
+      res.status(200).json({ message: 'Item marked as Today\'s Special' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to toggle Today\'s Special status' });
+  }
+});
+
+// Toggle Popular Item status
+app.post('/toggle-popular', async (req, res) => {
+  try {
+    const { name } = req.body;
+
+    const existingPopularItem = await PopularItem.findOne({ name });
+
+    if (existingPopularItem) {
+      // If it's already popular, remove it
+      await PopularItem.deleteOne({ name });
+      res.status(200).json({ message: 'Item removed from Popular Items' });
+    } else {
+      // If it's not popular, add it
+      const menuItem = await MenuItem.findOne({ name });
+
+      if (!menuItem) {
+        return res.status(404).json({ error: 'Menu item not found' });
+      }
+
+      const newPopularItem = new PopularItem({
+        name: menuItem.name,
+        type: menuItem.type,
+        description: menuItem.description,
+        price: menuItem.price,
+        image_path: menuItem.image_path,
+      });
+
+      await newPopularItem.save();
+      res.status(200).json({ message: 'Item added to Popular Items' });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to toggle Popular Item status' });
+  }
+});
 
 // Route to add a new menu item with image upload
 app.post('/add', upload.single('image'), async (req, res) => {
@@ -155,6 +294,27 @@ app.post('/update', async (req, res) => {
   }
 });
 
+app.post('/update_menu_item', async (req, res) => {
+  try {
+    const { name, type, description, price, available } = req.body;
+    const item = await MenuItem.findOne({ name });
+
+    if (!item) {
+      return res.status(404).send('Menu item not found');
+    }
+
+    item.type = type;
+    item.description = description;
+    item.price = parseFloat(price);
+    item.available = available;
+
+    await item.save();
+    res.status(200).send('Menu item updated successfully');
+  } catch (error) {
+    res.status(500).send('Error updating menu item');
+  }
+});
+
 app.delete('/delete/:name', async (req, res) => {
   try {
     const name = req.params.name;
@@ -193,14 +353,15 @@ const orderSchema = new mongoose.Schema({
         individual_price: Number,
         total_price: Number
       }
-    ]
+    ],
+    remarks : String
   });
   
   const OrderUp = mongoose.model('OrderUp', orderSchema, 'orders');
   
 // Route to update an existing order
 app.post('/orders/update-order', async (req, res) => {
-    const { member_id, items } = req.body;
+    const { member_id, items , remarks} = req.body;
   
     try {
       // Find the order by member_id
@@ -209,6 +370,7 @@ app.post('/orders/update-order', async (req, res) => {
       if (existingOrder) {
         // Update the items in the existing order
         existingOrder.items = items;
+        existingOrder.remarks = remarks;
         await existingOrder.save();
   
         res.status(200).json({ message: 'Order updated successfully' });

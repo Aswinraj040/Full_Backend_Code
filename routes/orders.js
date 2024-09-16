@@ -154,7 +154,7 @@ router.post('/reset-updates', async (req, res) => {
 
 // Create a new order
 router.post('/create-order', async (req, res) => {
-  const { unique_order_id, tableNumber, member_id, items } = req.body;
+  const { unique_order_id, tableNumber, member_id, items , remarks } = req.body;
 
   const orderItems = items.map(item => ({
     menuItem: item.menuItem,
@@ -168,7 +168,8 @@ router.post('/create-order', async (req, res) => {
       unique_order_id,
       tableNumber,
       member_id,
-      items: orderItems
+      items: orderItems,
+      remarks : remarks
     });
 
     await newOrder.save();
@@ -176,6 +177,35 @@ router.post('/create-order', async (req, res) => {
     res.status(201).json({ message: 'Order created successfully', order: newOrder });
   } catch (error) {
     res.status(400).json({ message: error.message });
+  }
+});
+
+
+router.put('/update', async (req, res) => {
+  try {
+    const { name, type, description, price, available } = req.body;
+
+    // Find the menu item by name
+    const item = await MenuItem.findOne({ name });
+
+    if (!item) {
+      return res.status(404).send('Menu item not found');
+    }
+    console.error(name , type , description , price , available);
+
+    // Update the item properties
+    item.type = type || item.type;
+    item.description = description || item.description;
+    item.price = parseFloat(price) || item.price;
+    item.available = available !== undefined ? available : item.available;
+
+    // Save the updated item
+    await item.save();
+
+    res.status(200).send('Menu item updated successfully');
+  } catch (error) {
+    console.error('Error updating menu item:', error);
+    res.status(500).send('Error updating menu item');
   }
 });
 

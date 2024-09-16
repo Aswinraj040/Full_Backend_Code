@@ -31,6 +31,7 @@ const orderSchema = new mongoose.Schema({
   final_price: { type: Number },
   isClosed: { type: Boolean, default: false },
   isUpdated: { type: Boolean, default: false },
+  remarks : { type : String , required : false}
 });
 
 orderSchema.pre("save", function (next) {
