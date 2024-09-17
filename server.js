@@ -7,7 +7,7 @@ require('dotenv').config(); // Load environment variables
 const multer = require('multer');
 
 // Initialize the Express app
-const app = express(); 
+const app = express();
 
 // Middleware
 app.use(cors()); // Enable CORS for all routes
