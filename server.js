@@ -67,11 +67,19 @@ const popularItemSchema = new mongoose.Schema({
   price: Number,
   image_path: String,
 });
+
+const gstSchema = new mongoose.Schema({
+  cgst: Number,
+  sgst: Number,
+  timestamp: { type: Date, default: Date.now },
+});
 // Create a model based on the menu item schema
 const MenuItem = mongoose.model('MenuItem', menuItemSchema, 'menuitems');
 const Special = mongoose.model('Special', specialSchema, 'todayspecials');
 const PopularItem = mongoose.model('PopularItem', popularItemSchema, 'popular_items');
 const Dish = mongoose.model('Dish', dishSchema);
+const GST = mongoose.model('GST', gstSchema, 'gst');
+
 app.use('/upimages', express.static(path.join(__dirname, 'Allitems')));
 
 app.get('/menuitems', async (req, res) => {
@@ -80,6 +88,22 @@ app.get('/menuitems', async (req, res) => {
     res.json(menuItems);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch menu items' });
+  }
+});
+
+app.get("/menuitems/search", async (req, res) => {
+  try {
+    const query = req.query.q;
+    if (!query) {
+      return res.status(400).json({ error: "Search query is required" });
+    }
+    const menuItems = await MenuItem.find({
+      name: { $regex: new RegExp(query, "i") },
+      available: true,
+    });
+    res.json(menuItems);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to search menu items" });
   }
 });
 
@@ -136,6 +160,44 @@ app.get('/menu-items-status', async (req, res) => {
     res.json(menuItemsWithStatus);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch menu items with status' });
+  }
+});
+
+app.get('/gst', async (req, res) => {
+  try {
+    const gstRates = await GST.find().sort({ timestamp: -1 }).limit(1);
+    res.json(gstRates[0]); // Return the latest GST record
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch GST rates' });
+  }
+});
+
+// Add or update GST rates
+app.post('/gst', async (req, res) => {
+  try {
+    const { cgst, sgst } = req.body;
+
+    // Create a new GST record with the current timestamp
+    const newGst = new GST({
+      cgst,
+      sgst,
+    });
+
+    await newGst.save();
+
+    res.status(200).json({ message: 'GST rates added/updated successfully' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to add/update GST rates' });
+  }
+});
+
+// Fetch GST history
+app.get('/gst-history', async (req, res) => {
+  try {
+    const gstHistory = await GST.find().sort({ timestamp: -1 });
+    res.json(gstHistory);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch GST history' });
   }
 });
 
@@ -387,4 +449,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(3000, '0.0.0.0', () => {
   console.log('Port 3000');
 });
-
