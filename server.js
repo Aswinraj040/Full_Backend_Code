@@ -394,7 +394,7 @@ app.delete('/delete/:name', async (req, res) => {
 });
 
 // Serve images from the specified directory
-app.use('/images', express.static('/Users/apple/Desktop/Full_Backend_Code/AllItems'));
+app.use('/images', express.static('C:/Users/tejas/OneDrive/Documents/GitHub/Full_Backend_Code/AllItems'));
 
 // Import and use the orders routes
 const ordersRoutes = require('./routes/orders');
@@ -444,6 +444,32 @@ app.post('/orders/update-order', async (req, res) => {
       res.status(500).json({ message: 'Internal server error' });
     }
   });
+
+  // Backend: Fetch existing order for a member_id
+app.post('/orders/fetch-order', async (req, res) => {
+  const { member_id } = req.body;
+
+  try {
+      const existingOrder = await Order.findOne({ member_id });
+
+      if (existingOrder) {
+          res.status(200).json({
+              orderExists: true,
+              orderData: existingOrder
+          });
+      } else {
+          res.status(200).json({
+              orderExists: false
+          });
+      }
+  } catch (error) {
+      console.error('Error fetching order:', error);
+      res.status(500).json({
+          error: 'An error occurred while fetching the order.'
+      });
+  }
+});
+
 // Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(3000, '0.0.0.0', () => {
