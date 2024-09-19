@@ -470,6 +470,21 @@ app.post('/orders/fetch-order', async (req, res) => {
   }
 });
 
+app.get("/todays-specials", async (req, res) => {
+  try {
+    // Fetch today's specials from the 'Special' collection
+    const todaysSpecials = await Special.find({ available: true }).sort({
+      timestamp: -1,
+    });
+
+    // Return specials in JSON format
+    res.status(200).json(todaysSpecials);
+  } catch (err) {
+    console.error("Error fetching Today's Specials:", err);
+    res.status(500).json({ error: "Failed to fetch Today's Specials" });
+  }
+});
+
 // Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(3000, '0.0.0.0', () => {
